@@ -9,26 +9,39 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
+
 @ToString(callSuper = true)
 @Entity
 public class Orders {
     @Id
-    @Setter
-    @Column(length = 14, name = "order_id")
-    private String orderId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id")
+    private Long id;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderItem> items = new ArrayList<OrderItem>();
 
     @Setter
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_info_id")
     private DeliveryInfo deliveryInfo;
+
+    @Setter
+    @Column(length = 14, name = "mgrcode", unique = true)
+    private String mgrcode;
 
     @Setter
     @Column(nullable = false)
     private Integer totalAmount;
 
+    @Setter
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -45,28 +58,40 @@ public class Orders {
 
     protected Orders() {}
 
-    private Orders(String orderId, DeliveryInfo deliveryInfo, Integer totalAmount, String ordered_customer_name, OrderStatus orderStatus) {
-        this.orderId = orderId;
+    private Orders(String mgrcode, DeliveryInfo deliveryInfo, Integer totalAmount,String ordered_customer_name, OrderStatus orderStatus, List<OrderItem> items,  LocalDateTime orderedDate) {
+        this.mgrcode = mgrcode;
         this.deliveryInfo = deliveryInfo;
         this.totalAmount = totalAmount;
         this.ordered_customer_name = ordered_customer_name;
         this.orderStatus = orderStatus;
+        for (OrderItem item : items) {
+            this.addOrderItem(item);
+        }
+
+        this.orderedDate = orderedDate;
+    }
+    public void addOrderItem(OrderItem item) {
+        this.items.add(item);
+        item.setOrder(this);
     }
 
-    public static Orders of(String orderId, DeliveryInfo deliveryInfo, Integer totalAmount,  String ordered_customer_name) {
-        return new Orders(orderId, deliveryInfo,totalAmount, ordered_customer_name, OrderStatus.RECEIVED);
+    public static Orders of(String mgrcode, DeliveryInfo deliveryInfo, Integer totalAmount,  String ordered_customer_name,List<OrderItem> items) {
+        return new Orders(mgrcode, deliveryInfo,totalAmount, ordered_customer_name, OrderStatus.RECEIVED, items, LocalDateTime.now());
+    }
+    public static Orders of(String mgrcode, DeliveryInfo deliveryInfo, Integer totalAmount,  String ordered_customer_name, OrderStatus orderStatus, List<OrderItem> items) {
+        return new Orders(mgrcode, deliveryInfo,totalAmount, ordered_customer_name,orderStatus, items, LocalDateTime.now());
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Orders order = (Orders) o;
-        return this.getOrderId() != null && Objects.equals(orderId, order.orderId);
+        if(!(o instanceof Orders that)) return false;
+        return this.getId() != null && this.getId().equals(that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getOrderId());
+        return Objects.hash(this.getId());
     }
+
 }

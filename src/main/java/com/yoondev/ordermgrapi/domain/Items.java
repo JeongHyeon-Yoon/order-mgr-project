@@ -1,23 +1,26 @@
 package com.yoondev.ordermgrapi.domain;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnJava;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+@Entity
 @Getter
 @ToString(callSuper = true)
-@Entity
 public class Items {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
-    private Long itemId;
+    private Long id;
 
     @Setter
     @Column(nullable = false, length = 20)
@@ -26,7 +29,6 @@ public class Items {
     @Setter
     @Column(length = 100)
     private String itemExplain;
-
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @CreatedDate
@@ -63,11 +65,12 @@ public class Items {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Items item = (Items) o;
-        return this.getItemId() != null && Objects.equals(itemId, item.itemId);
+        return this.getId() != null && Objects.equals(id, item.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getItemId());
+        return Objects.hash(this.getId());
     }
+
 }

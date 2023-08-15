@@ -14,7 +14,7 @@ public class DeliveryInfo {
     @Id
     @Column(name = "delivery_info_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long deliveryInfoId;
+    private Long id;
 
     @Setter
     @Column(nullable = false, length = 15)
@@ -57,11 +57,11 @@ public class DeliveryInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeliveryInfo that = (DeliveryInfo) o;
-        return this.getDeliveryInfoId() != null && Objects.equals(deliveryInfoId, that.deliveryInfoId);
+        return this.getId() != null && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDeliveryInfoId());
+        return Objects.hash(this.getId());
     }
 }
