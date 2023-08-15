@@ -1,11 +1,10 @@
 package com.yoondev.ordermgrapi.repository;
 
-import com.yoondev.ordermgrapi.config.JpaConfig;
+//import com.yoondev.ordermgrapi.config.JpaConfig;
 import com.yoondev.ordermgrapi.domain.DeliveryInfo;
 import com.yoondev.ordermgrapi.domain.Items;
-import com.yoondev.ordermgrapi.domain.OrderDetail;
 import com.yoondev.ordermgrapi.domain.Orders;
-import com.yoondev.ordermgrapi.domain.constant.OrderStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,27 +12,22 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @DisplayName("JPA 연결 테스트")
-@Import(JpaConfig.class)
+//@Import(JpaConfig.class)
 @DataJpaTest
 public class JpaRepositoryTest {
     private final OrdersRepository ordersRepository;
     private final ItemsRepository itemsRepository;
-    private final OrderDetailRepository orderDetailRepository;
     private final DeliveryInfoRepository deliveryInfoRepository;
 
     public JpaRepositoryTest(
             @Autowired OrdersRepository ordersRepository,
             @Autowired ItemsRepository itemsRepository,
-            @Autowired OrderDetailRepository orderDetailRepository,
             @Autowired DeliveryInfoRepository deliveryInfoRepository) {
         this.ordersRepository = ordersRepository;
         this.itemsRepository = itemsRepository;
-        this.orderDetailRepository = orderDetailRepository;
         this.deliveryInfoRepository = deliveryInfoRepository;
     }
 
@@ -44,15 +38,13 @@ public class JpaRepositoryTest {
 
         // When
         List<Orders> orders = ordersRepository.findAll();
-        List<OrderDetail> orderDetails = orderDetailRepository.findAll();
         List<DeliveryInfo> deliveryInfos = deliveryInfoRepository.findAll();
         List<Items> items = itemsRepository.findAll();
 
         // Then
         assertThat(orders).isNotNull().hasSize(5);
-        assertThat(orderDetails).isNotNull().hasSize(10);
         assertThat(deliveryInfos).isNotNull().hasSize(5);
-        assertThat(items).isNotNull().hasSize(10);
+        assertThat(items).isNotNull().hasSize(20);
     }
     @DisplayName("insert 테스트")
     @Test
@@ -88,14 +80,14 @@ public class JpaRepositoryTest {
     @Test
     void givenTestData_whenDeleting_thenWorksFine() {
         // Given
-        Items item = itemsRepository.findById(1L).orElseThrow();
-        long previousItemCount = itemsRepository.count();
+        Orders orders = ordersRepository.findById(1L).orElseThrow();
+        long previousOrderCount = ordersRepository.count();
 
         // When
-        itemsRepository.delete(item);
+        ordersRepository.delete(orders);
 
         // Then
-        assertThat(itemsRepository.count()).isEqualTo(previousItemCount - 1);
+        assertThat(ordersRepository.count()).isEqualTo(previousOrderCount - 1);
     }
 
 }

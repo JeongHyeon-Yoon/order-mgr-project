@@ -1,0 +1,20 @@
+{
+  "itemId": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "itemQuantity": [
+    11,
+    22,
+    33,
+    44
+  ],
+  "orderer": "주문자",
+  "receiver": "수령자",
+  "address": "집주소",
+  "zipCode": "123456",
+  "phoneNumber": "877-123-1212",
+  "deliveryMemo": "배송메모"
+}
